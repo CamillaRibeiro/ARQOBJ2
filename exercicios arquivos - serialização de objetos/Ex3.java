@@ -1,0 +1,92 @@
+import java.io.*;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Pessoa implements Serializable {
+
+    String nome;
+    int idade;
+
+    public Pessoa(String nome, int idade) {
+        this.nome = nome;
+        this.idade = idade;
+    }
+
+    @Override
+    public String toString() {
+        return "Nome: " + nome + " | Idade: " + idade;
+    }
+}
+
+public class Ex3 {
+
+    public static void main(String[] args) throws Exception {
+
+        Scanner scanner = new Scanner(System.in);
+
+        ArrayList<Pessoa> lista = new ArrayList<>();
+
+        int opcao;
+
+        do {
+
+            System.out.println("\n1 - Cadastrar");
+            System.out.println("2 - Listar");
+            System.out.println("0 - Sair");
+            System.out.print("Escolha: ");
+
+            opcao = scanner.nextInt();
+            scanner.nextLine();
+
+            // CADASTRO
+            if (opcao == 1) {
+
+                System.out.print("Nome: ");
+                String nome = scanner.nextLine();
+
+                System.out.print("Idade: ");
+                int idade = scanner.nextInt();
+                scanner.nextLine();
+
+                Pessoa p = new Pessoa(nome, idade);
+
+                lista.add(p);
+
+                // SERIALIZAR
+                ObjectOutputStream out =
+                        new ObjectOutputStream(
+                                new FileOutputStream("pessoas.ser"));
+
+                out.writeObject(lista);
+
+                out.close();
+
+                System.out.println("Pessoa cadastrada!");
+
+            }
+
+            // LISTAGEM
+            else if (opcao == 2) {
+
+                // DESSERIALIZAR
+                ObjectInputStream in =
+                        new ObjectInputStream(
+                                new FileInputStream("pessoas.ser"));
+
+                ArrayList<Pessoa> pessoas =
+                        (ArrayList<Pessoa>) in.readObject();
+
+                in.close();
+
+                System.out.println("\nLISTA DE PESSOAS:");
+
+                for (Pessoa p : pessoas) {
+                    System.out.println(p);
+                }
+            }
+
+        } while (opcao != 0);
+
+        scanner.close();
+    }
+}
